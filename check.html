@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<header class="header">
+    <p class="header__name">{{ message }}</p>
+    <div class="header__menu">
+        <ul>
+            <header-menu
+                v-for="menu in menus"
+                v-bind:menulist="menu"
+                v-bind:key="menu.id"
+            ></header-menu>
+        </ul>
+    </div>
+
+    <div class="header__auth">
+        <button class="btn btn-auth" v-if="isAuth">Войти</button>
+    </div>
+</header>
+
+<div class="modal">
+    <p class="modal__header">Авторизация</p>
+    <div class="modal__content">
+
+        <div class="modal__login">
+            <label>{{message}}</label>
+            <input type="text" placeholder="Введите email" @blur="validateEmail" @input="hideError">
+            <p class="error-field js-error-email"></p>
+        </div>
+
+
+        <div class="modal__password">
+            <input type="password">
+            <p class="error-field js-error-password"></p>
+        </div>
+    </div>
+    <button class="btn">Вход</button>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+	Vue.component('header-menu', {
+		props: ['menulist'],
+		template: `
+		<li>
+			<a :href="menulist.url">{{ menulist.text }}</a>
+		</li>
+	`
+	});
+
+	const menu = new Vue({
+		el: '.header__menu',
+		data: {
+			menus: [
+				{
+					id: 0,
+					text: 'menu 1',
+					url: 'menu1'
+				},
+				{
+					id: 1,
+					text: 'menu 2',
+					url: 'menu2'
+				},
+				{
+					id: 3,
+					text: 'menu 3',
+					url: 'menu3'
+				}
+			]
+		}
+	});
+
+	const header = new Vue({
+		el: '.header__name',
+		data: {
+			message: 'hello World'
+		}
+	});
+
+	const auth = new Vue({
+		el: '.btn-auth',
+		data: {
+			isAuth: true
+		}
+	});
+
+	const emailInput = new Vue({
+		el: '.modal__login',
+		data: {
+			message: 'Email'
+		},
+		methods: {
+			validateEmail: ({ type, target }) => {
+				const error = validate(target.value);
+				if (error) {
+					showError(error, 'email');
+				}
+			},
+			hideError: () => hideError('email')
+		}
+	});
+
+	const validate = (text) => {
+		let error = '';
+		if (!text) {
+			error = 'Введите текст';
+		} else if (text.length < 3) {
+			error = 'мало символов';
+		} else if (text.length > 50) {
+			error = 'слишком много символов';
+		}
+		return error;
+	};
+
+	const showError = (error, field) => {
+		$('.js-error-' + field).text(error);
+	};
+
+	const hideError = (field) => {
+		const $field = 	$('.js-error-' + field);
+		if ($field.text().length) {
+			console.log(222);
+			$field.text('');
+		}
+	}
+</script>
+</body>
+</html>
